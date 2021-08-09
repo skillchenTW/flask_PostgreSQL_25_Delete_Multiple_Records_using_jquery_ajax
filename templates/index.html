@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Delete Multiple Records using Jquey Ajax Python Flask PostgreSQL</title>
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+    <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.form/4.3.0/jquery.form.min.js" integrity="sha384-qlmct0AOBiA2VPZkMY3+2WqkHtIQ9lSdAsAn5RUJD/3vA5MKDgSGcdmIv4ycVxyn" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">  
+        <br />
+        <div class="table-responsive">  
+            <h3 align="center">Delete Multiple Records using Jquey Ajax Python Flask PostgreSQL</h3><br />
+            <div class="table-responsive">
+                <div id="targetLayer" class="btn btn-success" style="display:none;width:100%;margin-bottom: 10px;"></div>
+                <div id="loader-icon" style="display:none;"><img src="/static/img/loading8.gif" /></div>
+                <form id="deleteall" action="/delete" method="post">
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th width="5%">
+                                    <input type="submit" value="Delete" name="delete_all" id="delete_all" class="btn btn-danger btn-xs" >
+                                </th>
+                                <th>Name</th>
+                                <th>Position</th>
+                                <th>Office</th>
+                                <th>Age</th>
+                                <th>Salary</th>
+                            </tr>
+                        </thead>
+                        {% for row in emplist %}
+                            <tr>
+                                <td>
+                                    <input type="checkbox" name="checkdelete" id="checkdelete" class="delete_checkbox" value="{{row.id}}" />
+                                </td>
+                                <td>{{row.name}}</td>
+                                <td>{{row.position}}</td>
+                                <td>{{row.office}}</td>
+                                <td>{{row.age}}</td>
+                                <td>$ {{ "%.2f"|format(row.salary) }}</td>
+                            </tr>
+                        {% endfor %}
+                                
+                        
+
+                    </table>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .removeRow {background-color: #64b418;color:#FFFFFF;}
+    </style>
+    <script>
+        $(document).ready(function(){
+            $('.delete_checkbox').click(function(){
+             if($(this).is(':checked')) {
+                $(this).closest('tr').addClass('removeRow');
+             }else{
+                $(this).closest('tr').removeClass('removeRow');
+             }
+            });
+
+            $('#deleteall').submit(function(event){
+                if($('#checkdelete').val()){
+                    event.preventDefault();
+                    $('#loader-icon').show();
+                    $('#targetLayer').hide();
+                    $(this).ajaxSubmit({
+                    target: '#targetLayer',
+                        success:function(data){
+                            $('.removeRow').fadeOut(1500);
+                            $('#loader-icon').hide();
+                            $('#targetLayer').show();
+                            $('#targetLayer').html(data);
+                        },
+                        resetForm: true
+                    });
+                }
+                return false;
+            });
+        });
+    </script>
+</body>
+</html>
